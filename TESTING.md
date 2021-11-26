@@ -3,9 +3,9 @@ For testing need start the docker cointainer with PostgreSQL and tested data:
 ```
 ./tools/run_test_postgres_docker.sh
 ```
-This script run container - *test-postgres*, and mount needed data in temp directory.
-When the container start it execute a mounted script - *./tools/docker-entrypoint-initdb.d/init-db-data.sh* which
-create db - *test* (watch *db/create_db.sql*) and fill it data (wathc *db/data.sql*).
+This script run container - **test-postgres** available on port **5433** and mount needed data in temp directory.
+When the container start it execute a mounted script - `./tools/docker-entrypoint-initdb.d/init-db-data.sh` which
+create db - *test* (watch `db/create_db.sql`) and fill it data (wathc `db/data.sql`).
 
 Now we can do unit testing cmd
 ```
