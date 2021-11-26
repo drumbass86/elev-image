@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+package capturedimage_api.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "./api/v1";
+
+service ImageByElevation {
+    // Get route
+    rpc GetRoutePath(RoutePathRequest) returns (stream RoutePath) {
+        option (google.api.http) = {
+            get: "/v1/path"
+        };
+    }
+    rpc GetCapturedImage(CapturedImageRequest) returns (CapturedImage){
+        option (google.api.http) = {
+            get: "/v1/img/{id}"
+        };
+    }
+    rpc GetRawImage(RawImageRequest) returns (stream RawImage){
+        option (google.api.http) = {
+            get: "/v1/raw/{id}"
+        };
+    }
+    // Create CapturedImage, HTTP request body contains the resource
+    rpc CreateCapturedImage(CreateCapturedImageRequest) returns (CapturedImage) {
+        option (google.api.http) = {
+            post: "/v1/img/create"
+            body: "cap_image"
+        };
+    }
+}
+
+// GPS coordinates point where captured image
+message GeoPoint {
+    double lat=1;
+    double long=2;
+}
+
+// CapturedImage definition
+// image captured in GeoPoint poing on different elevation angle
+message CapturedImage {
+    uint32 id = 1;       // Unique ID number for product
+    uint32 time = 2;      // Unique UTC time in seconds from 1970
+    GeoPoint gps_coord = 3;
+    uint32 count_angle = 4;
+    repeated float elevation_angles = 5;
+    string path_raw = 6;
+    string path_image = 7;
+}
+
+message CapturedImageRequest {
+    uint32 id = 1;
+}
+
+// Route path
+message RoutePath {
+    uint32 begin_time = 1;
+    uint32 end_time = 2;
+
+    message RoutePoint {
+        GeoPoint gps_coord = 1;
+        uint32 cap_image_id = 2;
+        uint32 cap_image_time = 3;
+    }
+
+    repeated RoutePoint points = 3;
+}
+
+message RoutePathRequest {
+    uint32 begin_time = 1;
+    uint32 end_time = 2;
+}
+
+message RawImageRequest {
+    uint32 id = 1;
+    uint32 time = 2;
+    float elevation_angle = 3;
+}
+
+// RawImage 
+message RawImage {
+    string name = 1;
+    string mime_type = 2;    
+    float elevation_angle = 3;
+    bytes data = 4;
+}
+
+// Request for creating CapturedImage
+message CreateCapturedImageRequest {
+    CapturedImage cap_image = 1;
+}
